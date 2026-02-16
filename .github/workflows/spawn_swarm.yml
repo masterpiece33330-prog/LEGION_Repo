@@ -1,63 +1,39 @@
-name: Spawn Legion Swarm (T3 Nodes)
+name: LEGION Swarm Deployment (Heavy Compute)
 
 on:
   workflow_dispatch:
     inputs:
       node_count:
-        description: 'Number of nodes (Max 20 for Free Tier)'
-        required: true
+        description: 'Number of Nodes'
         default: '5'
 
 jobs:
-  deploy_swarm:
+  ignite_node:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     strategy:
-      # [회색지대 전술] Matrix Strategy를 악용(?)하여 
-      # 무료 컴퓨터 여러 대를 동시에 병렬로 기동시킴
+      fail-fast: false
       matrix:
-        node_index: [1, 2, 3, 4, 5] 
-
+        index: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    
     steps:
-      - name: Checkout Code
+      - name: Clone Repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup Python Environment
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Heavy Dependencies
         run: |
-          # 실제 연산에 필요한 라이브러리 설치 단계
-          pip install requests
+          echo "⚡ Installing Deep Learning Core..."
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install petals
+          pip install transformers
 
-      - name: 🔥 Ignite T3 Node
+      - name: Activate Neural Link
         run: |
-          # 아까 만든 두뇌 파일을 클라우드에서 실행
+          echo "⚡ Starting Distributed Inference..."
           python legion_node.py
-name: Spawn Legion Swarm
-
-on:
-  workflow_dispatch:
-    inputs:
-      node_count:
-        description: 'Number of nodes to spawn'
-        required: true
-        default: '1'
-
-jobs:
-  spawn_node:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # 입력받은 수만큼 복제 (여기서는 간단히 1~5개로 제한)
-        run_id: [1] 
-    steps:
-      - name: Bootstrapping T3 Node
-        run: |
-          echo "⚡ LEGION Node-${{ matrix.run_id }} is booting..."
-          echo "Hardware Profile: 2-Core CPU, 7GB RAM (Standard GitHub Runner)"
-          echo "Connecting to Overmind..."
-          sleep 2
-          echo "✅ Connection Established. Ready for orders."
 
