@@ -1,3 +1,40 @@
+name: Spawn Legion Swarm (T3 Nodes)
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_count:
+        description: 'Number of nodes (Max 20 for Free Tier)'
+        required: true
+        default: '5'
+
+jobs:
+  deploy_swarm:
+    runs-on: ubuntu-latest
+    strategy:
+      # [회색지대 전술] Matrix Strategy를 악용(?)하여 
+      # 무료 컴퓨터 여러 대를 동시에 병렬로 기동시킴
+      matrix:
+        node_index: [1, 2, 3, 4, 5] 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          # 실제 연산에 필요한 라이브러리 설치 단계
+          pip install requests
+
+      - name: 🔥 Ignite T3 Node
+        run: |
+          # 아까 만든 두뇌 파일을 클라우드에서 실행
+          python legion_node.py
 name: Spawn Legion Swarm
 
 on:
