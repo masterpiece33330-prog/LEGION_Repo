@@ -1,0 +1,26 @@
+name: Spawn Legion Swarm
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_count:
+        description: 'Number of nodes to spawn'
+        required: true
+        default: '1'
+
+jobs:
+  spawn_node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 입력받은 수만큼 복제 (여기서는 간단히 1~5개로 제한)
+        run_id: [1] 
+    steps:
+      - name: Bootstrapping T3 Node
+        run: |
+          echo "⚡ LEGION Node-${{ matrix.run_id }} is booting..."
+          echo "Hardware Profile: 2-Core CPU, 7GB RAM (Standard GitHub Runner)"
+          echo "Connecting to Overmind..."
+          sleep 2
+          echo "✅ Connection Established. Ready for orders."
+
